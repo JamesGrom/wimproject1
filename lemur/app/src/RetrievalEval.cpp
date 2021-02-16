@@ -28,6 +28,7 @@ Please refor to the namespace LocalParameter for setting the parameters within t
 #include "ScoreAccumulator.hpp"
 #include "ResultFile.hpp"
 #include "TextQueryRep.hpp"
+#include <Index.hpp>
 
 using namespace lemur::api;
 
@@ -43,7 +44,8 @@ namespace LocalParameter
     // the string with quotes are the actual variable names to use for specifying the parameters
     databaseIndex = ParamGetString("index");
     queryStream = ParamGetString("query");
-    resultFile = ParamGetString("result_rawtf_stemmed_nostopw", "res");
+    resultFile = ParamGetString("result", "res");
+	//RawTF serves as the default value if no weight scheme is specified
     weightScheme = ParamGetString("weightScheme", "RawTF");
     resultCount = ParamGetInt("resultCount", 100);
   }
@@ -72,8 +74,8 @@ double computeRawTFIDFWeight(int docID,
                              double qryTermWeight,
                              Index *ind)
 {
-  int N = docCount();
-  int divisor = docCount(termID);
+  int N = ind->docCount();
+  int divisor = ind->docCount(termID);
   double argument = double(double(N) / double(divisor));
   return docTermFreq * log(argument) * qryTermWeight;
 }
@@ -88,8 +90,8 @@ double computeLogTFIDFWeight(int docID,
   //compute the left hand expression
   double lht = log(docTermFreq) + 1;
   //compute the right hand expression
-  int N = docCount();
-  int divisor = docCount(termID);
+  int N = ind->docCount();
+  int divisor = ind->docCount(termID);
   double argument = double(double(N) / double(divisor));
   double rht = log(argument) * qryTermWeight;
   return lht * rht;
@@ -102,9 +104,9 @@ double computeOkapiWeight(int docID,
                           double qryTermWeight,
                           Index *ind)
 {
-  double docLengthFactor = docLength(docID) / docLengthAvg();
+  double docLengthFactor = ind->docLength(docID) / ind->docLengthAvg();
   double lht = (docTermFreq / (docTermFreq + 0.5 + 1.5 * (docLengthFactor)));
-  double argument = (docCount() - docCount(termID) + 0.5) / (docCount(termID) + 0.5);
+  double argument = (ind->docCount() - ind->docCount(termID) + 0.5) / (ind->docCount(termID) + 0.5);
   double mht = log(argument);
   double rht = (8 + qryTermWeight) / (7 + qryTermWeight);
   return lht * mht * rht;
