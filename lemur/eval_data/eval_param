@@ -2,6 +2,6 @@
 <index>eval_data_index.ifp</index>
 <query>query</query>
 <weightScheme>Okapi</weightScheme>
-<result>result_rawtf</result>
+<result>result_okapi</result>
 <resultCutOff>100</resultCutOff>
 </parameters>

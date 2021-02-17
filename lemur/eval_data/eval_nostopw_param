@@ -1,0 +1,8 @@
+<parameters>
+<index>eval_data_nostopw_index.ifp</index>
+<query>query</query>
+<weightScheme>Okapi</weightScheme>
+<result>result_okapi_nostopw</result>
+<resultCount>100</resultCount>
+</parameters>
+
